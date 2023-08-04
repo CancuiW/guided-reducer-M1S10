@@ -1,28 +1,50 @@
 import React, { useState, useReducer } from 'react';
+import reducer ,{initialState} from './../reducers/title.reducer';
+import { setTitle, setNewTitleText, toggleEditing } from './../actions/title.action'
+
 
 const Title = () => {
-  const [title, setTitle] = useState('Hello earthlings!');
-  const [editing, setEditing] = useState(false);
-  const [newTitleText, setNewTitleText] = useState('');
+  //---------------------------way1:previous way to solve this problem(set 3 states )
+  // const [title, setTitle] = useState('Hello earthlings!');
+  // const [editing, setEditing] = useState(false);
+  // const [newTitleText, setNewTitleText] = useState('');
+
+  // const handleChanges = e => {
+  //   setNewTitleText(e.target.value);
+  // };
+
+  // const handleEditing = () => {
+  //   setEditing(!editing);
+  // }
+
+  // const handleFormSubmit = () => {
+  //   setTitle(newTitleText);
+  //   setEditing(false);
+  // }
+
+  //----------------------------way2:use userReducer Hook to solve this
+  const [state,dispatch]=useReducer(reducer,initialState)
+  // initialState = { title: 'Hello earthlings!', editing: false, newTitleText:""}
+  
+  const handleEditing = () => {
+     dispatch(toggleEditing())
+   }
 
   const handleChanges = e => {
-    setNewTitleText(e.target.value);
+    const text=e.target.value
+    dispatch(setNewTitleText(text));
   };
-
-  const handleEditing = () => {
-    setEditing(!editing);
-  }
-
   const handleFormSubmit = () => {
-    setTitle(newTitleText);
-    setEditing(false);
+    dispatch(setTitle(state.newTitleText))
+    
   }
+                   
 
   return (
     <div>
-      {!editing ? (
+      {!state.editing ? (
         <h1>
-          {title}{' '}
+          {state.title}{' '}
           <i onClick={handleEditing} className="far fa-edit" />
         </h1>
       ) : (
@@ -31,7 +53,7 @@ const Title = () => {
             className="title-input"
             type="text"
             name="newTitleText"
-            value={newTitleText}
+            value={state.newTitleText}
             onChange={handleChanges}
           />
           <button
